@@ -43,6 +43,7 @@ group :test do
   gem 'faker'
   gem 'database_cleaner'
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'webmock'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
 end
 
