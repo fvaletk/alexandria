@@ -11,6 +11,9 @@
 
 # app/models/author.rb
 class Author < ApplicationRecord
+  # Associations
+  has_many :books
+
   # Validations
   validates :given_name, presence: true
   validates :family_name, presence: true

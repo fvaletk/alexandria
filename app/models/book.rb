@@ -1,7 +1,7 @@
 # app/models/book.rb
 class Book < ApplicationRecord
   # Associations
-  belongs_to :publisher
+  belongs_to :publisher, required: false
   belongs_to :author
 
   # Validations
