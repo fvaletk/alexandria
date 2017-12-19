@@ -25,8 +25,8 @@ RSpec.describe Paginator do
       expect(paginated.first).to eq(ruby_microscope)
     end
 
-    it 'contains rails_tutorial as the last paginated item' do
-      expect(paginated.last).to eq(rails_tutorial)
+    it 'contains ruby_microscope as the last paginated item' do
+      expect(paginated.last).to eq(ruby_microscope)
     end
   end
 
