@@ -5,6 +5,7 @@ RSpec.describe 'Books', type: :request do
   let(:ruby_microscope) { create(:ruby_microscope) }
   let(:rails_tutorial) { create(:ruby_on_rails_tutorial) }
   let(:agile_web_dev) { create(:agile_web_development) }
+  let(:books) { [ruby_microscope, rails_tutorial, agile_web_dev] }
 
   let(:books) { [ruby_microscope, rails_tutorial, agile_web_dev] }
 
@@ -192,6 +193,28 @@ RSpec.describe 'Books', type: :request do
         it 'receives "q[ftitle_cont]=Ruby" as an invalid param' do
           expect(json_body['error']['invalid_params']).to eq 'q[ftitle_cont]=Ruby'
         end
+      end
+    end
+  end
+
+  describe 'GET /api/books/:id' do
+    context 'with existing resource' do
+      before { get "/api/books/#{rails_tutorial.id}" }
+
+      it 'gets HTTP status 200' do
+        expect(response.status).to eq 200
+      end
+
+      it 'receives the "rails_tutorial" book as JSON' do
+        expected = { data: BookPresenter.new(rails_tutorial, {}).fields.embeds }
+        expect(response.body).to eq(expected.to_json)
+      end
+    end
+
+    context 'with nonexistent resource' do
+      it 'gets HTTP status 404' do
+        get '/api/books/2314323'
+        expect(response.status).to eq 404
       end
     end
   end
