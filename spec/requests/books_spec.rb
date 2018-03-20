@@ -7,8 +7,6 @@ RSpec.describe 'Books', type: :request do
   let(:agile_web_dev) { create(:agile_web_development) }
   let(:books) { [ruby_microscope, rails_tutorial, agile_web_dev] }
 
-  let(:books) { [ruby_microscope, rails_tutorial, agile_web_dev] }
-
   describe 'GET /api/books' do
     before { books }
 
@@ -215,6 +213,36 @@ RSpec.describe 'Books', type: :request do
       it 'gets HTTP status 404' do
         get '/api/books/2314323'
         expect(response.status).to eq 404
+      end
+    end
+  end
+
+  describe 'POST /api/books' do
+    let(:author) { create(:michael_hartl) }
+
+    before{ post '/api/books', params: { data: params } }
+
+    context 'with valid parameters' do
+      let(:params) do
+        attributes_for(:ruby_on_rails_tutorial, author_id: author.id)
+      end
+
+      it 'gets HTTP status 201' do
+        expect(response.status).to eq 201
+      end
+
+      it 'receives the newly created resource' do
+        expect(json_body['data']['title']).to eq('Ruby on Rails Tutorial')
+      end
+
+      it 'adds a record in the database' do
+        expect(Book.count).to eq 1
+      end
+
+      it 'gets the new resource location in the Location header' do
+        expect(response.headers['Location']).to eq(
+          "http://www.example.com/api/books/#{Book.first.id}"
+        )
       end
     end
   end
