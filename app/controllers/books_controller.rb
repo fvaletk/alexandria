@@ -10,8 +10,11 @@ class BooksController < ApplicationController
   end
 
   def create
-    book = Book.create(book_params)
-    render serializer(book).merge(status: :created, location: book)
+    if book.save
+      render serializer(book).merge(status: :created, location: book)
+    else
+      unprocessable_entity!(book)
+    end
   end
 
   private

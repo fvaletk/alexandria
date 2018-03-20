@@ -245,5 +245,23 @@ RSpec.describe 'Books', type: :request do
         )
       end
     end
+
+    context 'when invalid parameters' do
+      let(:params) { attributes_for(:ruby_on_rails_tutorial, title: '') }
+
+      it 'gets HTTP status 422' do
+        expect(response.status).to eq 422
+      end
+
+      it 'receives an error details' do
+        expect(json_body['error']['invalid_params']).to eq(
+          { 'title' => ["can't be blank"], 'author' => ["can't be blank"] }
+        )
+      end
+
+      it 'does not add a record in the database' do
+        expect(Book.count). to eq 0
+      end
+    end
   end
 end
