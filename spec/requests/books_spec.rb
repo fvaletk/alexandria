@@ -260,7 +260,7 @@ RSpec.describe 'Books', type: :request do
       end
 
       it 'does not add a record in the database' do
-        expect(Book.count). to eq 0
+        expect(Book.count).to eq 0
       end
     end
   end
