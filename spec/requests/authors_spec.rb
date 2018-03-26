@@ -187,4 +187,110 @@ RSpec.describe 'Authors', type: :request do
       end
     end
   end
+
+  describe 'POST /api/authors' do
+    before { post '/api/authors', params: { data: params } }
+
+    context 'with valid parameters' do
+      let(:params) do
+        attributes_for(:author)
+      end
+
+      it 'get HTTP status 201' do
+        expect(response.status).to eq 201
+      end
+
+      it 'receives the newly create resource' do
+        expect(json_body['data']['given_name']).to eq('Pat')
+      end
+
+      it 'adds a record in the database' do
+        expect(Author.count).to eq 1
+      end
+
+      it 'gets the new resource location in the Location header' do
+        expect(response.headers['Location']).to eq(
+          "http://www.example.com/api/authors/#{Author.first.id}"
+        )
+      end
+    end
+
+    context 'with invalid parameters' do
+      let(:params) {attributes_for(:author, given_name: '')}
+
+      it 'gets HTTP status 422' do
+        expect(response.status).to eq 422
+      end
+
+      it 'receives an error details' do
+        expect(json_body['error']['invalid_params']).to eq(
+          { 'given_name' => ["can't be blank"] }
+        )
+      end
+
+      it 'does not add a record in the database' do
+        expect(Author.count).to eq 0
+      end
+    end
+  end
+
+  describe 'PATCH /api/authors/:id' do
+    before { patch "/api/authors/#{pat.id}", params: {data: params}}
+
+    context 'with valid parameters' do
+      let(:params) {{given_name: 'Pat'}}
+
+      it 'gets HTTP status 200' do
+        expect(response.status).to eq 200
+      end
+
+      it 'receives the update resource' do
+        expect(json_body['data']['given_name']).to eq(
+          'Pat'
+        )
+      end
+
+      it 'updates the record in the database' do
+        expect(Author.first.given_name).to eq('Pat')
+      end
+    end
+
+    context 'with invalid parameters' do
+      let(:params) { {given_name: ''} }
+
+      it 'gets HTTP status 422' do
+        expect(response.status).to eq 422
+      end
+
+      it 'receives an error details' do
+        expect(json_body['error']['invalid_params']).to eq(
+          { 'given_name' => ["can't be blank"] }
+        )
+      end
+
+      it 'does not add a record in the database' do
+      end
+    end
+  end
+
+  describe 'DELETE /api/authors/:id' do
+    context 'with existing resource' do
+      before {delete "/api/authors/#{pat.id}"}
+
+      it 'gets HTTP status 204' do
+        expect(response.status).to eq 204
+      end
+
+      it 'deletes the author from the databse' do
+        expect(Author.count).to eq 0
+      end
+    end
+
+    context 'with nonexisting resource' do
+      it 'gets HTTP status 404' do
+        delete '/api/authors/2314242'
+        expect(response.status).to eq 404
+      end
+    end
+  end
 end
