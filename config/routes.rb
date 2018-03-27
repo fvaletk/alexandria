@@ -5,4 +5,6 @@ Rails.application.routes.draw do
     resources :authors
     resources :publishers
   end
+
+  root to: 'books#index'
 end
